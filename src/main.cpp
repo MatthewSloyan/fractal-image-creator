@@ -1,19 +1,22 @@
 //============================================================================
-// Name        : Fractal.cpp
-// Author      : 
-// Version     :
-// Copyright   : Your copyright notice
-// Description : Hello World in C++, Ansi-style
+// Name        : main.cpp
+// Author      : Matthew Sloyan
+// Description : Fractal image creator.
+//               Code adapted from Caveofprogramming Udemy course.
 //============================================================================
 
 #include <iostream>
 
-#include "BitmapFileHeader.hpp"
-#include "BitmapInfoHeader.hpp"
+#include "Bitmap.hpp"
 
 using namespace std;
+using namespace fractor;
 
 int main() {
-	cout << "!!!Hello World!!!" << endl; // prints !!!Hello World!!!
+	Bitmap bitmap(800, 600);
+
+	bitmap.write("test.bmp");
+
+	cout << "Finished" << endl;
 	return 0;
 }
