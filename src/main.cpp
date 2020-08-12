@@ -12,6 +12,7 @@
 #include "Bitmap.hpp"
 #include "Mandlebrot.hpp"
 #include "ZoomList.hpp"
+#include "FractalCreator.hpp"
 
 using namespace std;
 using namespace fractor;
@@ -28,16 +29,17 @@ int main() {
 	ZoomList zoomList(WIDTH, HEIGHT);
 
 	zoomList.add(Zoom(WIDTH/2, HEIGHT/2, 4.0/WIDTH));
+	zoomList.add(Zoom(295, HEIGHT - 202, 0.1));
+	zoomList.add(Zoom(312, HEIGHT - 304, 0.1));
 
 	unique_ptr<int[]> histogram(new int[Mandlebrot::MAX_ITERATIONS]{0});
 	unique_ptr<int[]> fractal(new int[WIDTH * HEIGHT]{0});
 
 	for (int y = 0; y < HEIGHT; y++) {
 		for (int x = 0; x < WIDTH; x++) {
-			double xFractal = (x - WIDTH/2 - 200) * 2.0/HEIGHT;
-			double yFractal = (y - HEIGHT/2) * 2.0/HEIGHT;
+			pair<double, double> coords = zoomList.doZoom(x, y);
 
-			int iterations = Mandlebrot::getIterations(xFractal, yFractal);
+			int iterations = Mandlebrot::getIterations(coords.first, coords.second);
 
 			fractal[y * WIDTH + x] = iterations;
 
@@ -69,7 +71,8 @@ int main() {
 					hue += ((double)histogram[i])/total;
 				}
 
-				green = pow(255, hue);
+				//green = pow(255, hue);
+				green = hue * 255;
 			}
 
 			bitmap.setPixel(x, y, red, green, blue);
