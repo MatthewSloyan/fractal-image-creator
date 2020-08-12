@@ -5,13 +5,20 @@
  *      Author: matthewsloyan
  */
 
-#include <cstdint>
-#include <memory>
-#include <math.h>
-#include "Mandlebrot.hpp"
 #include "FractalCreator.hpp"
 
 namespace fractor {
+
+void FractalCreator::run(string name) {
+	addZoom(Zoom(295, m_height - 202, 0.1));
+	addZoom(Zoom(312, m_height - 304, 0.1));
+
+	calculateIteration();
+	calculateTotalIterations();
+	drawFractal();
+
+	writeBitmap("test.bmp");
+}
 
 FractalCreator::FractalCreator(int width, int height) :
 		m_width(width), m_height(height), m_histogram(

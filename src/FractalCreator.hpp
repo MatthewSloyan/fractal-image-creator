@@ -8,11 +8,14 @@
 #ifndef FRACTALCREATOR_HPP_
 #define FRACTALCREATOR_HPP_
 
-#include <string>
+#include <cstdint>
 #include <memory>
+#include <math.h>
+#include "Mandlebrot.hpp"
 #include "Bitmap.hpp"
 #include "Zoom.hpp"
 #include "ZoomList.hpp"
+#include "RGB.hpp"
 
 using namespace std;
 
@@ -28,15 +31,17 @@ private:
 	ZoomList m_zoomList;
 	int m_total{0};
 
-public:
-	FractalCreator(int width, int height);
-	virtual ~FractalCreator();
-
+private:
 	void calculateIteration();
 	void calculateTotalIterations();
 	void drawFractal();
 	void addZoom(const Zoom& zoom);
 	void writeBitmap(string name);
+
+public:
+	FractalCreator(int width, int height);
+	virtual ~FractalCreator();
+	void run(string name);
 };
 
 } /* namespace fractor */
