@@ -42,6 +42,7 @@ private:
 	void calculateRangeTotals();
 	void drawFractal();
 	void writeBitmap(string name);
+	int getRange(int iterations) const;
 
 public:
 	FractalCreator(int width, int height);
@@ -49,6 +50,7 @@ public:
 	void addZoom(const Zoom& zoom);
 	void addRange(double rangeEnd, const RGB& rgb);
 	void run(string name);
+
 };
 
 } /* namespace fractor */

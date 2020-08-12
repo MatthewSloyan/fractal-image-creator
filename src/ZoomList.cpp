@@ -23,11 +23,11 @@ void ZoomList::add(const Zoom& zoom){
 	m_scale *= zoom.scale;
 }
 
-pair<double, double> ZoomList::doZoom(int x, int y){
+std::pair<double, double> ZoomList::doZoom(int x, int y){
 	double xFractal = (x - m_width/2)* m_scale + m_xCenter;
 	double yFractal = (y - m_height/2)* m_scale + m_yCenter;
 
-	return pair<double, double>(xFractal, yFractal);
+	return std::pair<double, double>(xFractal, yFractal);
 }
 
 } /* namespace fractor */

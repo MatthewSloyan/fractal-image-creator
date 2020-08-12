@@ -29,3 +29,9 @@ int main() {
 	cout << "Finished" << endl;
 	return 0;
 }
+
+// Other colour tests
+//	fractalCreator.addRange(0.0, RGB(0, 0, 255));
+//	fractalCreator.addRange(0.05, RGB(255, 99, 71));
+//	fractalCreator.addRange(0.08, RGB(255, 215, 0));
+//	fractalCreator.addRange(1.0, RGB(255, 255, 255));
