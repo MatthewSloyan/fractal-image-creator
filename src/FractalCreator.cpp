@@ -6,19 +6,9 @@
  */
 
 #include "FractalCreator.hpp"
+#include <iostream>
 
 namespace fractor {
-
-void FractalCreator::run(string name) {
-	addZoom(Zoom(295, m_height - 202, 0.1));
-	addZoom(Zoom(312, m_height - 304, 0.1));
-
-	calculateIteration();
-	calculateTotalIterations();
-	drawFractal();
-
-	writeBitmap("test.bmp");
-}
 
 FractalCreator::FractalCreator(int width, int height) :
 		m_width(width), m_height(height), m_histogram(
@@ -32,6 +22,33 @@ FractalCreator::FractalCreator(int width, int height) :
 FractalCreator::~FractalCreator() {
 
 }
+
+void FractalCreator::run(string name) {
+	calculateIteration();
+	calculateTotalIterations();
+	calculateRangeTotals();
+	drawFractal();
+
+	writeBitmap("test.bmp");
+}
+
+// Public
+void FractalCreator::addZoom(const Zoom &zoom) {
+	m_zoomList.add(zoom);
+}
+
+void FractalCreator::addRange(double rangeEnd, const RGB &rgb) {
+	m_ranges.push_back(rangeEnd * Mandlebrot::MAX_ITERATIONS);
+	m_colours.push_back(rgb);
+
+	if (m_bGotFirstRange) {
+		m_rangeTotals.push_back(0);
+	}
+
+	m_bGotFirstRange = true;
+}
+
+// == Private ==
 
 void FractalCreator::calculateIteration() {
 	for (int y = 0; y < m_height; y++) {
@@ -50,6 +67,25 @@ void FractalCreator::calculateIteration() {
 	}
 }
 
+void FractalCreator::calculateRangeTotals() {
+
+	int rangeIndex = 0;
+
+	for(int i=0; i<Mandlebrot::MAX_ITERATIONS; i++) {
+		int pixels = m_histogram[i];
+
+		if(i >= m_ranges[rangeIndex+1]) {
+			rangeIndex++;
+		}
+
+		m_rangeTotals[rangeIndex] += pixels;
+	}
+
+	for (int value : m_rangeTotals) {
+		cout << "Range total: " << value << endl;
+	}
+}
+
 void FractalCreator::calculateTotalIterations() {
 
 	for (int i = 0; i < Mandlebrot::MAX_ITERATIONS; i++) {
@@ -58,6 +94,11 @@ void FractalCreator::calculateTotalIterations() {
 }
 
 void FractalCreator::drawFractal() {
+
+	RGB startColour(0, 0, 0);
+	RGB endColour(0, 0, 255);
+	RGB colourDiff = endColour - startColour; // - operator overloaded
+
 	for (int y = 0; y < m_height; y++) {
 		for (int x = 0; x < m_width; x++) {
 
@@ -75,17 +116,14 @@ void FractalCreator::drawFractal() {
 					hue += ((double) m_histogram[i]) / m_total;
 				}
 
-				//green = pow(255, hue);
-				green = hue * 255;
+				red = startColour.r + colourDiff.r * hue;
+				blue = startColour.g + colourDiff.g * hue;
+				green = startColour.b + colourDiff.b * hue;
 			}
 
 			m_bitmap.setPixel(x, y, red, green, blue);
 		}
 	}
-}
-
-void FractalCreator::addZoom(const Zoom &zoom) {
-	m_zoomList.add(zoom);
 }
 
 void FractalCreator::writeBitmap(string name) {
