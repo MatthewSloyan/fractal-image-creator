@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <cstdint>
+#include <memory>
 #include "Bitmap.hpp"
 #include "Mandlebrot.hpp"
 
@@ -22,20 +23,45 @@ int main() {
 	double min = 999999;
 	double max = -999999;
 
+	unique_ptr<int[]> histogram(new int[Mandlebrot::MAX_ITERATIONS]{0});
+	unique_ptr<int[]> fractal(new int[WIDTH * HEIGHT]{0});
+
 	for (int y = 0; y < HEIGHT; y++) {
 		for (int x = 0; x < WIDTH; x++) {
-			double xFractal = (x - WIDTH/2) * 2.0/WIDTH;
+			double xFractal = (x - WIDTH/2 - 200) * 2.0/HEIGHT;
 			double yFractal = (y - HEIGHT/2) * 2.0/HEIGHT;
 
 			int iterations = Mandlebrot::getIterations(xFractal, yFractal);
 
-			uint8_t red = (uint8_t)(256 * (double)iterations/Mandlebrot::MAX_ITERATIONS);
+			fractal[y * WIDTH] = iterations;
 
-			bitmap.setPixel(x, y, red, red, red);
-			if(red < min) min = red;
-			if(red > max) max = red;
+			if(iterations != Mandlebrot::MAX_ITERATIONS){
+				histogram[iterations]++;
+			}
+
+			histogram[iterations]++;
+
+			uint8_t colour = (uint8_t)(256 * (double)iterations/Mandlebrot::MAX_ITERATIONS);
+
+			colour = colour * colour * colour;
+
+			bitmap.setPixel(x, y, 0, colour, 0);
+			if(colour < min) min = colour;
+			if(colour > max) max = colour;
 		}
 	}
+
+	cout << endl;
+
+	int count = 0;
+	for (int i = 0; i < Mandlebrot::MAX_ITERATIONS; i++) {
+		cout << histogram[i] << " " << flush;
+		count += histogram[i];
+	}
+
+	cout << count << "; " << WIDTH * HEIGHT << endl;
+
+	cout << endl;
 
 	cout << min << ", " << max << endl;
 
